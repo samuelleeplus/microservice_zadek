@@ -1,0 +1,10 @@
+server:
+  port: 8761
+
+
+eureka:
+  client:
+    # this service is the server, so it does not need to connect with eureka server
+    # other microservices must register (with true value) with this service registry
+    register-with-eureka: false
+    fetch-registry: false

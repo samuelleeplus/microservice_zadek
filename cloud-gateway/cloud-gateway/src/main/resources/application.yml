@@ -1,0 +1,62 @@
+server:
+  port: 9191
+
+spring:
+  application:
+    name: CLOUD-GATEWAY
+  cloud:
+    gateway:
+      routes:
+        - id: CUSTOMER-SERVICE
+          # lb -> load balance
+          uri: lb://CUSTOMER-SERVICE
+          predicates: # predicates/pattern of uri -> give path information
+            # any URL with customers/ will be redirected to customer service
+            - Path= /customers/**
+          filters: # configurations for fall back
+            - name: CircuitBreaker
+              args:
+                name: CUSTOMER-SERVICE
+                fallbackuri: forward:/userServiceFallBack # will fall back to this method
+        - id: OWNER-SERVICE
+          uri: lb://OWNER-SERVICE
+          predicates:
+            - Path=/owners/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: OWNER-SERVICE
+                fallbackuri: forward:/ownerServiceFallBack
+        - id: RESTAURANT-SERVICE
+          uri: lb://RESTAURANT-SERVICE
+          predicates:
+            - Path=/restaurants/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: RESTAURANT-SERVICE
+                fallbackuri: forward:/restaurantServiceFallBack
+# creating hystrix circuit-breaker -> identity services that are down & redirect it to fall back methods
+hystrix:
+  command:
+    fallbackcmd:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 4000 # set fall back time for 4 seconds
+
+# configurations for actuotors -> enable hystrix stream endpoint to use in hystrix dashboard
+management:
+  endpoints:
+    web:
+      exposure:
+        include: hystrix.stream
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    instance:
+      hostname: localhost

@@ -1,0 +1,9 @@
+# application.yml is being used from/will start from application context
+# to get cloud configurations, you need a bootstrap.yml
+# to bootstrap configurations to start application context from application.yml file
+
+#spring:
+#  cloud:
+#    config:
+#      enabled: true
+#      uri: http://localhost:9292 # cloud-config-server port

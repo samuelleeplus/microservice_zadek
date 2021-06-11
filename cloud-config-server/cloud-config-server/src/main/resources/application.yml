@@ -1,0 +1,14 @@
+server:
+  port: 9292
+
+
+spring:
+  application:
+    name: MICROSERVICE-CONFIG-SERVER
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/samuelleeplus/microservice-config-server  # uri of github repository
+          #clone-on-start: true
+
